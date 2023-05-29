@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Linq;
 using Microsoft.VisualBasic.FileIO;
 using System.Runtime.InteropServices;
+using System.IO.Pipes;
 
 namespace ImageViewer
 {
@@ -342,10 +343,20 @@ namespace ImageViewer
 
         public void MoveToRecycleBin(string filePath)
         {
+            ReleaseFile(FilePath);
+            static void ReleaseFile(string filePath)
+            {
+                  using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                    {
+                        // 关闭文件流以释放文件句柄，并清理缓冲区
+                        fileStream.Close();
+                    }
+            }
             FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             LoadLatestImage();
         }
 
+        private short invalidFileCount = 1;
         private void LoadLatestImage()
         {
             if (!string.IsNullOrEmpty(currentFolderPath))
@@ -356,12 +367,21 @@ namespace ImageViewer
                 if (imageFiles.Length > 0)
                 {
                     Array.Sort(imageFiles);
-                    string latestImageFile = imageFiles[imageFiles.Length - 1];
+                    string latestImageFile = imageFiles[imageFiles.Length - invalidFileCount];
                     FilePath = latestImageFile;
                     using (FileStream stream = new FileStream(latestImageFile, FileMode.Open, FileAccess.Read))
                     {
-                        Image image = Image.FromStream(stream);
-                        pictureBox.Image = image;
+                        try
+                        {
+                            Image image = Image.FromStream(stream);
+                            pictureBox.Image = image;
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show($"{FilePath}\n\n为无效的图像文件,已跳过\n\n异常： " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            invalidFileCount++;
+                            LoadLatestImage();
+                        }
                     }
                 }
             }
