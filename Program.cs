@@ -22,7 +22,7 @@ namespace ImageViewer
             if (Environment.OSVersion.Version.Major >= 6)
             {
                 SetProcessDpiAwareness(PROCESS_DPI_AWARENESS.Process_Per_Monitor_DPI_Aware);
-            }
+            } 
             Application.Run(new MainForm());
         }
 
@@ -55,10 +55,9 @@ namespace ImageViewer
             System.Windows.Forms.Button button = new System.Windows.Forms.Button();
 
             Text = "Õº∆¨∑÷¿‡∆˜";
-
             this.WindowState = FormWindowState.Maximized;
-            Width = Screen.PrimaryScreen.Bounds.Width;
-            Height = Screen.PrimaryScreen.Bounds.Height;
+            int Width = Screen.PrimaryScreen.WorkingArea.Width;
+            int Height = Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.CaptionHeight;
 
             pictureBox = new PictureBox();
             pictureBox.Size = new Size(this.Width - Width / 4, this.Height);
