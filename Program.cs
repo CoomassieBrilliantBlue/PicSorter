@@ -18,11 +18,10 @@ namespace ImageViewer
             Application.SetCompatibleTextRenderingDefault(false);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            // 设置高 DPI 缩放模式
             if (Environment.OSVersion.Version.Major >= 6)
             {
                 SetProcessDpiAwareness(PROCESS_DPI_AWARENESS.Process_Per_Monitor_DPI_Aware);
-            } 
+            }
             Application.Run(new MainForm());
         }
 
@@ -40,36 +39,50 @@ namespace ImageViewer
     public class MainForm : Form
     {
         private PictureBox pictureBox;
-        private System.Windows.Forms.Button Button_L1;
-        private System.Windows.Forms.Button Button_L2;
-        private System.Windows.Forms.Button Button_L3;
-        private System.Windows.Forms.Button Button_L4;
-        private System.Windows.Forms.Button Button_R1;
-        private System.Windows.Forms.Button Button_R2;
-        private System.Windows.Forms.Button Button_R3;
-        private System.Windows.Forms.Button Button_R4;
+        private Button Button_L1;
+        private Button Button_L2;
+        private Button Button_L3;
+        private Button Button_L4;
+        private Button Button_R1;
+        private Button Button_R2;
+        private Button Button_R3;
+        private Button Button_R4;
         private string currentFolderPath;
 
         public MainForm()
         {
-            System.Windows.Forms.Button button = new System.Windows.Forms.Button();
-
             Text = "图片分类器";
             this.WindowState = FormWindowState.Maximized;
             int Width = Screen.PrimaryScreen.WorkingArea.Width;
             int Height = Screen.PrimaryScreen.WorkingArea.Height - SystemInformation.CaptionHeight;
+            float screenAspectRatio = (float)Height / Width;
 
             pictureBox = new PictureBox();
-            pictureBox.Size = new Size(this.Width - Width / 4, this.Height);
-            pictureBox.Location = new Point(Width / 8, 0);
+            if (screenAspectRatio < 1.5)
+            {
+                pictureBox.Size = new Size(Width - Width / 4, Height);
+                pictureBox.Location = new Point(Width / 8, 0);
+            }
+            else
+            {
+                pictureBox.Size = new Size(Width, Height - Height / 4);
+                pictureBox.Location = new Point(0, Height / 8);
+            }
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
 
             //左侧按钮
             //按钮1
-            Button_L1 = new System.Windows.Forms.Button();
+            Button_L1 = new Button();
             Button_L1.Text = "选择\n待分类目录";
             Button_L1.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_L1.Size = new Size(Width / 8, Height / 4);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_L1.Size = new Size(Width / 8, Height / 4);
+            }
+            else
+            {
+                Button_L1.Size = new Size(Width / 4, Height / 8);
+            }
             Button_L1.Click += new EventHandler(Button_L_1_Click);
             void Button_L_1_Click(object sender, EventArgs e)
             {
@@ -78,12 +91,21 @@ namespace ImageViewer
             Button_L1.MouseDown += ShowStatusOnButtonL1RightClick;
 
             //按钮2
-            Button_L2 = new System.Windows.Forms.Button();
+            Button_L2 = new Button();
             Button_L2.Text = "选择\n目录1路径";
             Button_L2.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_L2.Size = new Size(Width / 8, Height / 4);
-            Button_L2.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            Button_L2.Location = new Point(Button_L2.Width - Width / 8, Height / 4);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_L2.Size = new Size(Width / 8, Height / 4);
+                Button_L2.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                Button_L2.Location = new Point(Button_L2.Width - Width / 8, Height / 4);
+            }
+            else
+            {
+                Button_L2.Size = new Size(Width / 4, Height / 8);
+                Button_L2.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                Button_L2.Location = new Point(Width / 4, 0);
+            }
             Button_L2.Click += new EventHandler(Button_L_2_Click);
             void Button_L_2_Click(object sender, EventArgs e)
             {
@@ -91,24 +113,43 @@ namespace ImageViewer
             }
 
             //按钮3
-            Button_L3 = new System.Windows.Forms.Button();
+            Button_L3 = new Button();
             Button_L3.Text = "选择\n目录2路径";
             Button_L3.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_L3.Size = new Size(Width / 8, Height / 4);
-            Button_L3.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            Button_L3.Location = new Point(Button_L3.Width - Width / 8, Height / 2);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_L3.Size = new Size(Width / 8, Height / 4);
+                Button_L3.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                Button_L3.Location = new Point(Button_L3.Width - Width / 8, Height / 2);
+            }
+            else
+            {
+                Button_L3.Size = new Size(Width / 4, Height / 8);
+                Button_L3.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                Button_L3.Location = new Point(Width / 2, 0);
+            }
             Button_L3.Click += new EventHandler(Button_L_3_Click);
             void Button_L_3_Click(object sender, EventArgs e)
             {
                 SelectPath(sender, e, 2);
             }
+
             //按钮4
-            Button_L4 = new System.Windows.Forms.Button();
+            Button_L4 = new Button();
             Button_L4.Text = "选择\n目录3路径";
             Button_L4.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_L4.Size = new Size(Width / 8, Height / 4);
-            Button_L4.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            Button_L4.Location = new Point(Button_L4.Width - Width / 8, Height / 4 * 3);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_L4.Size = new Size(Width / 8, Height / 4);
+                Button_L4.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                Button_L4.Location = new Point(Button_L4.Width - Width / 8, Height / 4 * 3);
+            }
+            else
+            {
+                Button_L4.Size = new Size(Width / 4, Height / 8);
+                Button_L4.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+                Button_L4.Location = new Point(Width / 4 * 3, 0);
+            }
             Button_L4.Click += new EventHandler(Button_L_4_Click);
             void Button_L_4_Click(object sender, EventArgs e)
             {
@@ -117,13 +158,23 @@ namespace ImageViewer
 
             //右侧按钮
             //按钮1
-            Button_R1 = new System.Windows.Forms.Button();
+            Button_R1 = new Button();
             Button_R1.Text = "目录1";
             Button_R1.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_R1.Dock = DockStyle.Right;
-            Button_R1.Size = new Size(Width / 8, Height / 4);
-            Button_R1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Button_R1.Location = new Point(this.ClientSize.Width - Button_R1.Width, Height / 4);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_R1.Dock = DockStyle.Right;
+                Button_R1.Size = new Size(Width / 8, Height / 4);
+                Button_R1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                Button_R1.Location = new Point(this.ClientSize.Width - Button_R1.Width, Height / 4);
+            }
+            else
+            {
+                Button_R1.Dock = DockStyle.Bottom;
+                Button_R1.Size = new Size(Width / 4, Height / 8);
+                Button_R1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+                Button_R1.Location = new Point(Width / 4, this.ClientSize.Height - Button_R1.Height);
+            }
             Button_R1.Click += new EventHandler(Button_1_Click);
             void Button_1_Click(object sender, EventArgs e)
             {
@@ -138,13 +189,23 @@ namespace ImageViewer
             }
 
             //按钮2
-            Button_R2 = new System.Windows.Forms.Button();
+            Button_R2 = new Button();
             Button_R2.Text = "目录2";
             Button_R2.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_R2.Dock = DockStyle.Right;
-            Button_R2.Size = new Size(Width / 8, Height / 4);
-            Button_R2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Button_R2.Location = new Point(this.ClientSize.Width - Button_R2.Width, Height / 2);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_R2.Dock = DockStyle.Right;
+                Button_R2.Size = new Size(Width / 8, Height / 4);
+                Button_R2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                Button_R2.Location = new Point(this.ClientSize.Width - Button_R2.Width, Height / 2);
+            }
+            else
+            {
+                Button_R2.Dock = DockStyle.Bottom;
+                Button_R2.Size = new Size(Width / 4, Height / 8);
+                Button_R2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+                Button_R2.Location = new Point(Width / 2, this.ClientSize.Height - Button_R2.Height);
+            }
             Button_R2.Click += new EventHandler(Button_2_Click);
             void Button_2_Click(object sender, EventArgs e)
             {
@@ -159,13 +220,23 @@ namespace ImageViewer
             }
 
             //按钮3
-            Button_R3 = new System.Windows.Forms.Button();
+            Button_R3 = new Button();
             Button_R3.Text = "目录3";
             Button_R3.Font = new Font("微软雅黑", 12, FontStyle.Bold);
-            Button_R3.Dock = DockStyle.Right;
-            Button_R3.Size = new Size(Width / 8, Height / 4);
-            Button_R3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Button_R3.Location = new Point(this.ClientSize.Width - Button_R3.Width, Height / 4 * 3);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_R3.Dock = DockStyle.Right;
+                Button_R3.Size = new Size(Width / 8, Height / 4);
+                Button_R3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                Button_R3.Location = new Point(this.ClientSize.Width - Button_R3.Width, Height / 4 * 3);
+            }
+            else
+            {
+                Button_R3.Dock = DockStyle.Bottom;
+                Button_R3.Size = new Size(Width / 4, Height / 8);
+                Button_R3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+                Button_R3.Location = new Point(Width / 4 * 3, this.ClientSize.Height - Button_R3.Height);
+            }
             Button_R3.Click += new EventHandler(Button_3_Click);
             void Button_3_Click(object sender, EventArgs e)
             {
@@ -180,14 +251,24 @@ namespace ImageViewer
             }
 
             //按钮4
-            Button_R4 = new System.Windows.Forms.Button();
+            Button_R4 = new Button();
             Button_R4.Text = "删除";
             Button_R4.Font = new Font("微软雅黑", 20, FontStyle.Bold);
             Button_R4.ForeColor = Color.Red;
-            Button_R4.Dock = DockStyle.Right;
-            Button_R4.Size = new Size(Width / 8, Height / 4);
-            Button_R4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            Button_R4.Location = new Point(this.ClientSize.Width - Button_R4.Width, 0);
+            if (screenAspectRatio < 1.5)
+            {
+                Button_R4.Dock = DockStyle.Right;
+                Button_R4.Size = new Size(Width / 8, Height / 4);
+                Button_R4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                Button_R4.Location = new Point(this.ClientSize.Width - Button_R4.Width, 0);
+            }
+            else
+            {
+                Button_R4.Dock = DockStyle.Bottom;
+                Button_R4.Size = new Size(Width / 4, Height / 8);
+                Button_R4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+                Button_R4.Location = new Point(0, this.ClientSize.Height - Button_R4.Height);
+            }
             Button_R4.Click += new EventHandler(Button_4_Click);
             void Button_4_Click(object sender, EventArgs e)
             {
@@ -345,11 +426,11 @@ namespace ImageViewer
             ReleaseFile(FilePath);
             static void ReleaseFile(string filePath)
             {
-                  using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
-                    {
-                        // 关闭文件流以释放文件句柄，并清理缓冲区
-                        fileStream.Close();
-                    }
+                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                {
+                    // 关闭文件流以释放文件句柄，并清理缓冲区
+                    fileStream.Close();
+                }
             }
             FileSystem.DeleteFile(filePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             LoadLatestImage();
@@ -375,7 +456,7 @@ namespace ImageViewer
                             Image image = Image.FromStream(stream);
                             pictureBox.Image = image;
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             MessageBox.Show($"{FilePath}\n\n为无效的图像文件,已跳过\n\n异常： " + ex.Message, "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             invalidFileCount++;
